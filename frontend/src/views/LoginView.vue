@@ -1,8 +1,11 @@
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
+const route = useRoute()
+
+const veioDeRotaProtegida = computed(() => Boolean(route.query.redirect))
 
 const modo = ref('login') // 'login' ou 'cadastro'
 const erro = ref('')
@@ -67,7 +70,8 @@ function handleSubmit() {
   }
 
   setTimeout(() => {
-    router.push('/')
+    const destino = route.query.redirect || '/'
+    router.push(destino)
   }, 1000)
 }
 </script>
@@ -85,7 +89,9 @@ function handleSubmit() {
           }}
         </p>
       </div>
-
+      <p v-if="veioDeRotaProtegida" class="msg-aviso">
+        Faça login para acessar esta página.
+        </p>
       <div class="tabs">
         <button
           type="button"
@@ -156,6 +162,15 @@ function handleSubmit() {
 </template>
 
 <style scoped>
+.msg-aviso {
+  color: #92400e;
+  background-color: #fef3c7;
+  padding: 0.65rem;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
 .auth-page {
   min-height: calc(100vh - 70px);
   display: flex;
